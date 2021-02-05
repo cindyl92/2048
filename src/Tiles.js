@@ -6,180 +6,316 @@ const GRID_SIZE = 4;
 class Tiles extends Component {
     state = {
         tiles: [
-            [2,0,2,2],
-            [2,0,0,2],
-            [0,8,4,4],
+            [2,2,2,2],
+            [2,2,0,2],
+            [2,8,4,4],
             [0,2,0,2]
         ]
     }
 
     onKeyDownHanlder = (e) => {
         if (e.key === "ArrowRight") {
-            //alert("->");
             this.shiftRight();
         }
         if (e.key === "ArrowLeft") {
-            //alert("<-");
             this.shiftLeft();
         }
         if (e.key === "ArrowUp") {
-            //alert("^");
             this.shiftUp();
         }
         if (e.key === "ArrowDown") {
-            //alert("v");
             this.shiftDown();
         }
     }
 
     shiftRight = () => {
         let updatedTiles = [...this.state.tiles];
-        //let emptyTiles = [];
+        let emptyTiles = [];
 
         for (let i=0; i<GRID_SIZE; i++) {
-            let zeros = updatedTiles[i][GRID_SIZE-1] === 0? 1:0;
+            let zeros = updatedTiles[i][GRID_SIZE-1] === 0 ? [GRID_SIZE-1] : [];
             let index = GRID_SIZE-1;
             let prevIndex = GRID_SIZE-1;
             let prevVal = updatedTiles[i][GRID_SIZE-1];
+            let emptyTile = updatedTiles[i][GRID_SIZE-1] === 0 ? [[i,GRID_SIZE-1]] : [];
             
             for (let j=GRID_SIZE-2; j>=0; j--) {
                 // When the element is 0
-                if (updatedTiles[i][j] === 0) zeros++;
+                if (updatedTiles[i][j] === 0) {
+                    emptyTile.push([i,j]);
+                    zeros.push(j);
+                }
 
                 // When the element matches with previous value
                 else if (updatedTiles[i][j] === prevVal) {
                     updatedTiles[i][j] = 0;
-                    updatedTiles[i][prevIndex] = 0;
+                    emptyTile.push([i,j]);
+                    
                     updatedTiles[i][index] = prevVal * 2;
-                    zeros++;
+                    if (prevVal * 2 === 2048) {
+                        alert("You win!");
+                    }
+
+                    if (index !== prevIndex && !zeros.includes(prevIndex)) {
+                        updatedTiles[i][prevIndex] = 0;
+                        emptyTile.push([i,prevIndex]);
+                    }
+
+                    zeros.push(j);
                     prevVal = 0;
-                    index = j+zeros;
+                    index = j+zeros.length;
                 }
                 // When the element has different value from previous value
                 else if (updatedTiles[i][j] !== prevVal) {
                     prevVal = updatedTiles[i][j];
                     prevIndex = j;
-                    index = j+zeros;
-                    if (zeros !== 0) {
+                    index = j+zeros.length;
+                    if (zeros.length !== 0) {
+                        if (zeros.includes(index)) {
+                            zeros.shift();
+                            emptyTile.shift();
+                        }
                         updatedTiles[i][index] = prevVal;
                         updatedTiles[i][j] = 0;
+                        emptyTile.push([i,j]);
+                        zeros.push(j);
                     }
                 }
             }
+            //console.log(emptyTile);
+            emptyTile.forEach(element => {
+                emptyTiles.push(element);    
+            });
+            
+        }
+        //console.log(emptyTiles);
+
+        if (emptyTiles.length === 0) {
+            /// TODO: Check if the tiles are not movable
+            alert("You Loose");
+        }
+        else {
+            let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+            updatedTiles[newTile[0]][newTile[1]] = 2;
         }
         this.setState({tiles: updatedTiles});
     }
 
     shiftLeft = () => {
         let updatedTiles = [...this.state.tiles];
-        //let emptyTiles = [];
+        let emptyTiles = [];
 
         for (let i=0; i<GRID_SIZE; i++) {
-            let zeros = updatedTiles[i][0] === 0? 1:0;
+            let zeros = updatedTiles[i][0] === 0 ? [0] : [];
             let index = 0;
             let prevIndex = 0;
             let prevVal = updatedTiles[i][0];
+            let emptyTile = updatedTiles[i][0] === 0 ? [[i,0]] : [];
             
             for (let j=1; j<GRID_SIZE; j++) {
                 // When the element is 0
-                if (updatedTiles[i][j] === 0) zeros++;
+                if (updatedTiles[i][j] === 0) {
+                    emptyTile.push([i,j]);
+                    zeros.push(j);
+                }
 
                 // When the element matches with previous value
                 else if (updatedTiles[i][j] === prevVal) {
                     updatedTiles[i][j] = 0;
-                    updatedTiles[i][prevIndex] = 0;
+                    emptyTile.push([i,j]);
+                    
                     updatedTiles[i][index] = prevVal * 2;
-                    zeros++;
+                    if (prevVal * 2 === 2048) {
+                        alert("You win!");
+                    }
+
+                    if (index !== prevIndex && !zeros.includes(prevIndex)) {
+                        updatedTiles[i][prevIndex] = 0;
+                        emptyTile.push([i,prevIndex]);
+                    }
+
+                    zeros.push(j);
                     prevVal = 0;
-                    index = j-zeros;
+                    index = j-zeros.length;
                 }
                 // When the element has different value from previous value
                 else if (updatedTiles[i][j] !== prevVal) {
                     prevVal = updatedTiles[i][j];
                     prevIndex = j;
-                    index = j-zeros;
-                    if (zeros !== 0) {
+                    index = j-zeros.length;
+                    if (zeros.length !== 0) {
+                        if (zeros.includes(index)) {
+                            zeros.shift();
+                            emptyTile.shift();
+                        }
                         updatedTiles[i][index] = prevVal;
                         updatedTiles[i][j] = 0;
+                        emptyTile.push([i,j]);
+                        zeros.push(j);
                     }
                 }
             }
+            //console.log(emptyTile);
+            emptyTile.forEach(element => {
+                emptyTiles.push(element);    
+            });
+            
+        }
+        //console.log(emptyTiles);
+
+        if (emptyTiles.length === 0) {
+            /// TODO: Check if the tiles are not movable
+            alert("You Loose");
+        }
+        else {
+            let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+            updatedTiles[newTile[0]][newTile[1]] = 2;
         }
         this.setState({tiles: updatedTiles});
     }
 
     shiftUp = () => {
         let updatedTiles = [...this.state.tiles];
-        //let emptyTiles = [];
+        let emptyTiles = [];
 
         for (let j=0; j<GRID_SIZE; j++) {
-            let zeros = updatedTiles[0][j] === 0? 1:0;
+            let zeros = updatedTiles[0][j] === 0 ? [0] : [];
             let index = 0;
             let prevIndex = 0;
             let prevVal = updatedTiles[0][j];
+            let emptyTile = updatedTiles[0][j] === 0 ? [[0,j]] : [];
             
             for (let i=1; i<GRID_SIZE; i++) {
                 // When the element is 0
-                if (updatedTiles[i][j] === 0) zeros++;
+                if (updatedTiles[i][j] === 0) {
+                    emptyTile.push([i,j]);
+                    zeros.push(i);
+                }
 
                 // When the element matches with previous value
                 else if (updatedTiles[i][j] === prevVal) {
                     updatedTiles[i][j] = 0;
-                    updatedTiles[prevIndex][j] = 0;
+                    emptyTile.push([i,j]);
+                    
                     updatedTiles[index][j] = prevVal * 2;
-                    zeros++;
+                    if (prevVal * 2 === 2048) {
+                        alert("You win!");
+                    }
+
+                    if (index !== prevIndex && !zeros.includes(prevIndex)) {
+                        updatedTiles[prevIndex][j] = 0;
+                        emptyTile.push([prevIndex, j]);
+                    }
+
+                    zeros.push(i);
                     prevVal = 0;
-                    index = i-zeros;
+                    index = i-zeros.length;
                 }
                 // When the element has different value from previous value
                 else if (updatedTiles[i][j] !== prevVal) {
                     prevVal = updatedTiles[i][j];
                     prevIndex = i;
-                    index = i-zeros;
-                    if (zeros !== 0) {
+                    index = i-zeros.length;
+                    if (zeros.length !== 0) {
+                        if (zeros.includes(index)) {
+                            zeros.shift();
+                            emptyTile.shift();
+                        }
                         updatedTiles[index][j] = prevVal;
                         updatedTiles[i][j] = 0;
+                        emptyTile.push([i,j]);
+                        zeros.push(i);
                     }
                 }
             }
+            //console.log(emptyTile);
+            emptyTile.forEach(element => {
+                emptyTiles.push(element);    
+            });
+            
+        }
+        //console.log(emptyTiles);
+
+        if (emptyTiles.length === 0) {
+            /// TODO: Check if the tiles are not movable
+            alert("You Loose");
+        }
+        else {
+            let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+            updatedTiles[newTile[0]][newTile[1]] = 2;
         }
         this.setState({tiles: updatedTiles});
     }
 
     shiftDown = () => {
         let updatedTiles = [...this.state.tiles];
-        //let emptyTiles = [];
+        let emptyTiles = [];
 
         for (let j=0; j<GRID_SIZE; j++) {
-            let zeros = updatedTiles[GRID_SIZE-1][j] === 0? 1:0;
+            let zeros = updatedTiles[GRID_SIZE-1][j] === 0 ? [GRID_SIZE-1] : [];
             let index = GRID_SIZE-1;
             let prevIndex = GRID_SIZE-1;
             let prevVal = updatedTiles[GRID_SIZE-1][j];
+            let emptyTile = updatedTiles[GRID_SIZE-1][j] === 0 ? [[GRID_SIZE-1,j]] : [];
             
             for (let i=GRID_SIZE-2; i>=0; i--) {
                 // When the element is 0
-                if (updatedTiles[i][j] === 0) zeros++;
+                if (updatedTiles[i][j] === 0) {
+                    emptyTile.push([i,j]);
+                    zeros.push(j);
+                }
 
                 // When the element matches with previous value
                 else if (updatedTiles[i][j] === prevVal) {
                     updatedTiles[i][j] = 0;
-                    updatedTiles[prevIndex][j] = 0;
+                    emptyTile.push([i,j]);
+                    
                     updatedTiles[index][j] = prevVal * 2;
-                    zeros++;
+                    if (prevVal * 2 === 2048) {
+                        alert("You win!");
+                    }
+
+                    if (index !== prevIndex && !zeros.includes(prevIndex)) {
+                        updatedTiles[prevIndex][j] = 0;
+                        emptyTile.push([prevIndex,j]);
+                    }
+
+                    zeros.push(i);
                     prevVal = 0;
-                    index = i+zeros;
+                    index = i+zeros.length;
                 }
                 // When the element has different value from previous value
                 else if (updatedTiles[i][j] !== prevVal) {
                     prevVal = updatedTiles[i][j];
                     prevIndex = i;
-                    index = i+zeros;
-                    if (zeros !== 0) {
+                    index = i+zeros.length;
+                    if (zeros.length !== 0) {
+                        if (zeros.includes(index)) {
+                            zeros.shift();
+                            emptyTile.shift();
+                        }
                         updatedTiles[index][j] = prevVal;
                         updatedTiles[i][j] = 0;
+                        emptyTile.push([i,j]);
+                        zeros.push(i);
                     }
                 }
             }
+            //console.log(emptyTile);
+            emptyTile.forEach(element => {
+                emptyTiles.push(element);    
+            });
+            
+        }
+        //console.log(emptyTiles);
+
+        if (emptyTiles.length === 0) {
+            /// TODO: Check if the tiles are not movable
+            alert("You Loose");
+        }
+        else {
+            let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+            updatedTiles[newTile[0]][newTile[1]] = 2;
         }
         this.setState({tiles: updatedTiles});
     }
@@ -203,7 +339,7 @@ class Tiles extends Component {
                             return (
                             <tr>
                                 {items.map((subItems, sIndex) => {
-                                    return <th key={index+sIndex}> {subItems===0? null:subItems} </th>;
+                                    return <th className={"th"+subItems}> {subItems===0? null:subItems} </th>;
                                 })}
                             </tr>
                             );
