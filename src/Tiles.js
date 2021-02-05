@@ -6,11 +6,42 @@ const GRID_SIZE = 4;
 class Tiles extends Component {
     state = {
         tiles: [
-            [2,2,2,2],
-            [2,2,0,2],
-            [2,8,4,4],
-            [0,2,0,2]
+            [0,0,0,0],
+            [0,0,0,0],
+            [0,0,0,0],
+            [0,0,0,0]
         ]
+    }
+
+    constructor(props) {
+        super();
+        let posX1 = Math.floor(Math.random() * GRID_SIZE);
+        let posY1 = Math.floor(Math.random() * GRID_SIZE);
+        let posX2 = Math.floor(Math.random() * GRID_SIZE);
+        let posY2 = Math.floor(Math.random() * GRID_SIZE);
+
+        while (posX1 === posX2 && posY1 === posY2) {
+            posX2 = Math.floor(Math.random() * GRID_SIZE);
+            posY2 = Math.floor(Math.random() * GRID_SIZE);
+        }
+
+        let newGameTiles = [...this.state.tiles];
+        //console.log(newGameTiles);
+        newGameTiles[posX1][posY1] = this.getRandomTileValue();
+        newGameTiles[posX2][posY2] = this.getRandomTileValue();
+        console.log(posX1 + ", " + posY1);
+        console.log(posX2 + ", " + posY2);
+
+        this.setState({tiles: newGameTiles});
+
+    }
+
+    getRandomTileValue = () => {
+        // 5% probability to get "4"
+        // otherwise get "2"
+        let randomNum = Math.floor(Math.random() * 100);
+        if (randomNum < 5) return 4;
+        else return 2;
     }
 
     onKeyDownHanlder = (e) => {
@@ -96,7 +127,7 @@ class Tiles extends Component {
         }
         else {
             let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-            updatedTiles[newTile[0]][newTile[1]] = 2;
+            updatedTiles[newTile[0]][newTile[1]] = this.getRandomTileValue();
         }
         this.setState({tiles: updatedTiles});
     }
@@ -169,7 +200,7 @@ class Tiles extends Component {
         }
         else {
             let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-            updatedTiles[newTile[0]][newTile[1]] = 2;
+            updatedTiles[newTile[0]][newTile[1]] = this.getRandomTileValue();
         }
         this.setState({tiles: updatedTiles});
     }
@@ -242,7 +273,7 @@ class Tiles extends Component {
         }
         else {
             let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-            updatedTiles[newTile[0]][newTile[1]] = 2;
+            updatedTiles[newTile[0]][newTile[1]] = this.getRandomTileValue();
         }
         this.setState({tiles: updatedTiles});
     }
@@ -315,7 +346,7 @@ class Tiles extends Component {
         }
         else {
             let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-            updatedTiles[newTile[0]][newTile[1]] = 2;
+            updatedTiles[newTile[0]][newTile[1]] = this.getRandomTileValue();
         }
         this.setState({tiles: updatedTiles});
     }
@@ -328,6 +359,7 @@ class Tiles extends Component {
         // create 4x4 board filled with 0s
         //let newBoard = Array(4).fill(0).map(row => new Array(4).fill(0));        
 
+        
         return (
             <div
                 tabIndex="0"
