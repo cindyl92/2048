@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import './Tiles.css';
+import Aux from '../../hoc/Aux/Aux';
+import Backdrop from '../../components/UI/Backdrop/Backdrop';
+import classes from './Tiles.css';
 
 const GRID_SIZE = 4;
 
@@ -9,12 +11,24 @@ class Tiles extends Component {
             [0,0,0,0],
             [0,0,0,0],
             [0,0,0,0],
-            [0,0,0,0]
-        ]
+            [1024,1024,0,0]
+        ],
+        gameEnded: false,
+        reached2048: false
     }
 
     constructor(props) {
         super();
+
+        let positions = this.setNewGame();
+        let newGameTiles = [...this.state.tiles]; 
+        newGameTiles[positions[0]][positions[1]] = this.getRandomTileValue();
+        newGameTiles[positions[2]][positions[3]] = this.getRandomTileValue();
+
+        this.setState({tiles: newGameTiles});
+    }
+
+    setNewGame = () => {
         let posX1 = Math.floor(Math.random() * GRID_SIZE);
         let posY1 = Math.floor(Math.random() * GRID_SIZE);
         let posX2 = Math.floor(Math.random() * GRID_SIZE);
@@ -25,15 +39,44 @@ class Tiles extends Component {
             posY2 = Math.floor(Math.random() * GRID_SIZE);
         }
 
-        let newGameTiles = [...this.state.tiles];
-        //console.log(newGameTiles);
-        newGameTiles[posX1][posY1] = this.getRandomTileValue();
-        newGameTiles[posX2][posY2] = this.getRandomTileValue();
-        console.log(posX1 + ", " + posY1);
-        console.log(posX2 + ", " + posY2);
+        let posSet = [];
+        posSet.push(posX1);
+        posSet.push(posY1);
+        posSet.push(posX2);
+        posSet.push(posY2);
 
+        return posSet;
+    }
+
+    startNewGameHandler = () => {
+        let positions = this.setNewGame();
+        let newGameTiles = Array(4).fill(0).map(row => new Array(4).fill(0));
+        newGameTiles[positions[0]][positions[1]] = this.getRandomTileValue();
+        newGameTiles[positions[2]][positions[3]] = this.getRandomTileValue();
         this.setState({tiles: newGameTiles});
+        this.setState({gameEnded: false});
+    }
 
+    continueHanlder = () => {
+        this.setState({gameEnded: false});
+        this.setState({reached2048: false});
+    }
+
+    updateTiles = (emptyTiles, updatedTiles) => {
+        if (emptyTiles.length === 0) {
+            if (!this.checkIfTileIsMovable(updatedTiles))
+                this.setState({gameEnded: true});
+        }
+        else {
+            if (emptyTiles.length == 1) {
+                updatedTiles[emptyTiles[0][0]][emptyTiles[0][1]] = this.getRandomTileValue();    
+                if (!this.checkIfTileIsMovable(updatedTiles))
+                    this.setState({gameEnded: true});
+            }
+            let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+            updatedTiles[newTile[0]][newTile[1]] = this.getRandomTileValue();
+        }
+        return updatedTiles;
     }
 
     getRandomTileValue = () => {
@@ -42,6 +85,27 @@ class Tiles extends Component {
         let randomNum = Math.floor(Math.random() * 100);
         if (randomNum < 5) return 4;
         else return 2;
+    }
+
+    checkIfTileIsMovable = (tiles) => {
+        console.log("IN CHECK IF MOVABLE");
+        // CHECK VERTICALLY
+        for (let i=0; i<GRID_SIZE; i++) {
+            for (let j=0; j<GRID_SIZE-1; j++) {
+                if (tiles[i][j] == tiles[i][j+1])
+                    return true;
+            }
+        }
+
+        // CHECK HORIZONTALLY
+        for (let j=0; j<GRID_SIZE; j++) {
+            for (let i=0; i<GRID_SIZE-1; i++) {
+                if (tiles[i][j] == tiles[i+1][j])
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     onKeyDownHanlder = (e) => {
@@ -84,7 +148,8 @@ class Tiles extends Component {
                     
                     updatedTiles[i][index] = prevVal * 2;
                     if (prevVal * 2 === 2048) {
-                        alert("You win!");
+                        this.setState({reached2048: true});
+                        this.setState({gameEnded: true});
                     }
 
                     if (index !== prevIndex && !zeros.includes(prevIndex)) {
@@ -119,17 +184,7 @@ class Tiles extends Component {
             });
             
         }
-        //console.log(emptyTiles);
-
-        if (emptyTiles.length === 0) {
-            /// TODO: Check if the tiles are not movable
-            alert("You Loose");
-        }
-        else {
-            let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-            updatedTiles[newTile[0]][newTile[1]] = this.getRandomTileValue();
-        }
-        this.setState({tiles: updatedTiles});
+        this.setState({tiles: this.updateTiles(emptyTiles, updatedTiles)});
     }
 
     shiftLeft = () => {
@@ -157,7 +212,8 @@ class Tiles extends Component {
                     
                     updatedTiles[i][index] = prevVal * 2;
                     if (prevVal * 2 === 2048) {
-                        alert("You win!");
+                        this.setState({reached2048: true});
+                        this.setState({gameEnded: true});
                     }
 
                     if (index !== prevIndex && !zeros.includes(prevIndex)) {
@@ -192,17 +248,7 @@ class Tiles extends Component {
             });
             
         }
-        //console.log(emptyTiles);
-
-        if (emptyTiles.length === 0) {
-            /// TODO: Check if the tiles are not movable
-            alert("You Loose");
-        }
-        else {
-            let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-            updatedTiles[newTile[0]][newTile[1]] = this.getRandomTileValue();
-        }
-        this.setState({tiles: updatedTiles});
+        this.setState({tiles: this.updateTiles(emptyTiles, updatedTiles)});
     }
 
     shiftUp = () => {
@@ -230,7 +276,8 @@ class Tiles extends Component {
                     
                     updatedTiles[index][j] = prevVal * 2;
                     if (prevVal * 2 === 2048) {
-                        alert("You win!");
+                        this.setState({reached2048: true});
+                        this.setState({gameEnded: true});
                     }
 
                     if (index !== prevIndex && !zeros.includes(prevIndex)) {
@@ -265,17 +312,7 @@ class Tiles extends Component {
             });
             
         }
-        //console.log(emptyTiles);
-
-        if (emptyTiles.length === 0) {
-            /// TODO: Check if the tiles are not movable
-            alert("You Loose");
-        }
-        else {
-            let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-            updatedTiles[newTile[0]][newTile[1]] = this.getRandomTileValue();
-        }
-        this.setState({tiles: updatedTiles});
+        this.setState({tiles: this.updateTiles(emptyTiles, updatedTiles)});
     }
 
     shiftDown = () => {
@@ -303,7 +340,8 @@ class Tiles extends Component {
                     
                     updatedTiles[index][j] = prevVal * 2;
                     if (prevVal * 2 === 2048) {
-                        alert("You win!");
+                        this.setState({reached2048: true});
+                        this.setState({gameEnded: true});
                     }
 
                     if (index !== prevIndex && !zeros.includes(prevIndex)) {
@@ -338,47 +376,38 @@ class Tiles extends Component {
             });
             
         }
-        //console.log(emptyTiles);
-
-        if (emptyTiles.length === 0) {
-            /// TODO: Check if the tiles are not movable
-            alert("You Loose");
-        }
-        else {
-            let newTile = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
-            updatedTiles[newTile[0]][newTile[1]] = this.getRandomTileValue();
-        }
-        this.setState({tiles: updatedTiles});
+        this.setState({tiles: this.updateTiles(emptyTiles, updatedTiles)});
     }
     
 
     render () {
-        //let tiles = {...this.state.tiles};
-        //console.log(tiles);
-
-        // create 4x4 board filled with 0s
-        //let newBoard = Array(4).fill(0).map(row => new Array(4).fill(0));        
-
-        
         return (
-            <div
-                tabIndex="0"
-                onKeyDown={this.onKeyDownHanlder}>
-                
-                <table>
-                    <tbody>
-                        {this.state.tiles.map((items, index) => {
-                            return (
-                            <tr>
-                                {items.map((subItems, sIndex) => {
-                                    return <th className={"th"+subItems}> {subItems===0? null:subItems} </th>;
-                                })}
-                            </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+            <Aux>
+                <Backdrop 
+                    show={this.state.gameEnded}
+                    reached2048={this.state.reached2048}
+                    newGameButtonClicked={this.startNewGameHandler}
+                    continueButtonClicked={this.continueHanlder}/>
+                <div
+                    className={classes.Tiles}
+                    tabIndex="0"
+                    onKeyDown={this.onKeyDownHanlder}>
+                    
+                    <table>
+                        <tbody>
+                            {this.state.tiles.map((items, index) => {
+                                return (
+                                <tr>
+                                    {items.map((subItems, sIndex) => {
+                                        return <th className={"th"+subItems}> {subItems===0? null:subItems} </th>;
+                                    })}
+                                </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </Aux>
         );
     }
 }

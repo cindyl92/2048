@@ -1,0 +1,77 @@
+.Tiles {
+    z-index: 500;
+    width: 80%;
+    box-shadow: 10px 10px 10px black;
+    padding: 16px;
+}
+
+table, th, td {
+    border: 10px solid #320E3B;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table {
+    width: 800px;
+    height: 800px;
+}
+
+th {
+    font-size: 90px;
+    width: 25%;
+    height: 25%;
+}
+
+.th2 {
+    background-color: #D9D0DE;
+}
+
+.th4 {
+    background-color: #DBE6D8;
+}
+
+.th8 {
+    background-color: #DDFBD2;
+}
+
+.th16 {
+    background-color: #BCEDF6;
+}
+.th32 {
+    background-color: #94B6E7;
+}
+
+.th64 {
+    background-color: #809BDF;
+}
+
+.th128 {
+    background-color: #6B7FD7;
+}
+
+.th256 {
+    background-color: #4F66CF;
+}
+
+.th512 {
+    color: #F5F3F7;
+    background-color: #354EC0;
+    
+}
+
+.th1024 {
+    color: #F5F3F7;
+    background-color: #2C41A0;
+    font-size: 70px;
+}
+.th2048 {
+    color: #F5F3F7;
+    background-color: #4C2A85;
+    font-size: 70px;
+}
+
+.th4096, .th8192 {
+    color: #F5F3F7;
+    background-color: #320E3B;
+    font-size: 70px;
+}
