@@ -12,8 +12,8 @@ table, th, td {
 }
 
 table {
-    width: 800px;
-    height: 800px;
+    width: 700px;
+    height: 700px;
 }
 
 th {
@@ -62,16 +62,16 @@ th {
 .th1024 {
     color: #F5F3F7;
     background-color: #2C41A0;
-    font-size: 70px;
+    font-size: 65px;
 }
 .th2048 {
     color: #F5F3F7;
     background-color: #4C2A85;
-    font-size: 70px;
+    font-size: 60px;
 }
 
 .th4096, .th8192 {
     color: #F5F3F7;
     background-color: #320E3B;
-    font-size: 70px;
+    font-size: 60px;
 }

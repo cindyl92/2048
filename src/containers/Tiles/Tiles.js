@@ -9,8 +9,8 @@ class Tiles extends Component {
     state = {
         tiles: [
             [0,0,0,0],
-            [0,0,0,0],
-            [0,0,0,0],
+            [0,4,512,0],
+            [2,2,512,0],
             [1024,1024,0,0]
         ],
         gameEnded: false,
@@ -109,17 +109,19 @@ class Tiles extends Component {
     }
 
     onKeyDownHanlder = (e) => {
-        if (e.key === "ArrowRight") {
-            this.shiftRight();
-        }
-        if (e.key === "ArrowLeft") {
-            this.shiftLeft();
-        }
-        if (e.key === "ArrowUp") {
-            this.shiftUp();
-        }
-        if (e.key === "ArrowDown") {
-            this.shiftDown();
+        if (!this.state.gameEnded) {
+            if (e.key === "ArrowRight") {
+                this.shiftRight();
+            }
+            if (e.key === "ArrowLeft") {
+                this.shiftLeft();
+            }
+            if (e.key === "ArrowUp") {
+                this.shiftUp();
+            }
+            if (e.key === "ArrowDown") {
+                this.shiftDown();
+            }
         }
     }
 
